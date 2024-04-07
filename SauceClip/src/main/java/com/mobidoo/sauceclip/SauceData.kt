@@ -12,7 +12,7 @@ package com.mobidoo.sauceclip
  * @property externalProductId 외부 시스템에서의 제품 고유 식별자입니다. 이 값은 null일 수 있습니다.
  */
 data class SauceCartInfo(
-    val linkUrl: String,
+    val linkUrl: String?,
     val clipIdx: String,
     val productId: Int,
     val price: String?,
