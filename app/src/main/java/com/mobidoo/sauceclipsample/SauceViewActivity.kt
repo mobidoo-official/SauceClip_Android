@@ -34,6 +34,7 @@ class SauceViewActivity : Activity() {
         sauceview = findViewById(R.id.sauceclip)
         sauceview.setInit("18", "391")
         sauceview.setStageMode(true)
+        sauceview.setProductActivity(true)
         sauceview.load()
 
         sampleText = findViewById(R.id.sample_text)
