@@ -1,6 +1,7 @@
 package com.mobidoo.sauceclip
 
 import android.content.Context
+import android.content.Intent
 import android.os.Handler
 import android.util.AttributeSet
 import android.webkit.JavascriptInterface
@@ -9,12 +10,20 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
+import android.widget.Toast
+import com.google.gson.Gson
 
 class SauceClipView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     private val webView: WebView
+    private var partnerId: String? = null
+    private var clipId: String? = null
+    private var stageMode: Boolean = false
+    private var openProductActivity: Boolean = true
+    private lateinit var mContext: Context
+
     var webViewClient: WebViewClient = WebViewClient()
         set(value) {
             field = value
@@ -35,27 +44,50 @@ class SauceClipView @JvmOverloads constructor(
 
         webView.webChromeClient = WebChromeClient()
         webView.settings.userAgentString = webView.settings.userAgentString + " sauce-sdk-android"
-
+        mContext = context
     }
 
-    // 웹뷰에 로드할 URL을 설정하는 메서드
-    fun loadUrl(url: String) {
-        webView.loadUrl(url)
+    fun setInit(partnerId: String, clipId: String) {
+        this.partnerId = partnerId
+        this.clipId = clipId
     }
 
-//    fun hidePlayerUi() {
-//        webView.evaluateJavascript(
-//            "window.postMessage(\"sauceflexPictureInPictureOn\", \"*\");",
-//            null
-//        )
-//    }
+    fun setStageMode(on: Boolean) {
+        stageMode = on
+    }
 
-//    fun showPlayerUi() {
-//        webView.evaluateJavascript(
-//            "window.postMessage(\"sauceflexPictureInPictureOff\", \"*\");",
-//            null
-//        )
-//    }
+    fun setProductActivity(on: Boolean) {
+        openProductActivity = on
+    }
+
+    fun load() {
+
+        if (partnerId == null) {
+            throw Error("partnerId is required")
+        }
+
+        if (clipId == null) {
+            throw Error("clipId is required")
+        }
+
+        webView.addJavascriptInterface(
+            SauceclipMoveProductJavaScriptInterface { productInfo ->
+                if (openProductActivity) {
+                    val intent = Intent(mContext, WebActivity::class.java)
+                    intent.putExtra("link", productInfo.linkUrl)
+                    mContext.startActivity(intent)
+                }
+            },
+            "sauceclipMoveProduct"
+        )
+
+        if (stageMode) {
+            webView.loadUrl("https://stage.player.sauceclip.com/player?partnerId=$partnerId&clipId=$clipId")
+        } else {
+            webView.loadUrl("https://player.sauceclip.com/player?partnerId=$partnerId&clipId=$clipId")
+        }
+
+    }
 
     fun setOnEnterListener(callback: (() -> Unit)?) {
         webView.removeJavascriptInterface("sauceclipEnter")
@@ -77,17 +109,7 @@ class SauceClipView @JvmOverloads constructor(
         }
     }
 
-    fun setOnMoveLoginListener(callback: (() -> Unit)?) {
-        webView.removeJavascriptInterface("sauceclipMoveLogin")
-        if (callback != null) {
-            webView.addJavascriptInterface(
-                SauceclipMoveLoginJavaScriptInterface(callback),
-                "sauceclipMoveLogin"
-            )
-        }
-    }
-
-    fun setOnShareListener(callback: ((message: String) -> Unit)?) {
+    fun setOnShareListener(callback: ((message: SauceShareInfo) -> Unit)?) {
         webView.removeJavascriptInterface("sauceclipOnShare")
         if (callback != null) {
             webView.addJavascriptInterface(
@@ -97,17 +119,22 @@ class SauceClipView @JvmOverloads constructor(
         }
     }
 
-    fun setOnMoveProductListener(callback: ((message: String) -> Unit)?) {
+    fun setOnMoveProductListener(callback: ((message: SauceProductInfo) -> Unit)?) {
         webView.removeJavascriptInterface("sauceclipMoveProduct")
-        if (callback != null) {
-            webView.addJavascriptInterface(
-                SauceclipMoveProductJavaScriptInterface(callback),
-                "sauceclipMoveProduct"
-            )
-        }
+        webView.addJavascriptInterface(
+            SauceclipMoveProductJavaScriptInterface { productInfo ->
+                callback?.invoke(productInfo)
+                if (openProductActivity) {
+                    val intent = Intent(mContext, WebActivity::class.java)
+                    intent.putExtra("link", productInfo.linkUrl)
+                    mContext.startActivity(intent)
+                }
+            },
+            "sauceclipMoveProduct"
+        )
     }
 
-    fun setOnMoveCartListener(callback: ((message: String) -> Unit)?) {
+    fun setOnMoveCartListener(callback: ((message: SauceCartInfo) -> Unit)?) {
         webView.removeJavascriptInterface("sauceclipMoveCart")
         if (callback != null) {
             webView.addJavascriptInterface(
@@ -143,54 +170,47 @@ class SauceClipView @JvmOverloads constructor(
         }
     }
 
-    private class SauceclipMoveLoginJavaScriptInterface(
-        val sauceflexMoveLogin: (() -> Unit)
-    ) {
-        private val handler = Handler()
-
-        @JavascriptInterface   // 로그인 팝업에서 확인시
-        fun sauceclipMoveLogin() {
-            handler.post {
-                sauceflexMoveLogin.invoke()
-            }
-        }
-    }
-
     private class SauceclipMoveProductJavaScriptInterface(
-        val sauceflexOnShare: ((message: String) -> Unit)
+        val sauceflexOnShare: ((message: SauceProductInfo) -> Unit)
     ) {
         private val handler = Handler()
 
         @JavascriptInterface   // 공유하기
         fun sauceclipMoveProduct(message: String) {
+            val gson = Gson()
+            val productInfo = gson.fromJson(message, SauceProductInfo::class.java)
             handler.post {
-                sauceflexOnShare.invoke(message)
+                sauceflexOnShare.invoke(productInfo)
             }
         }
     }
 
     private class SauceclipMoveCartJavaScriptInterface(
-        val sauceflexOnShare: ((message: String) -> Unit)
+        val sauceflexOnShare: ((message: SauceCartInfo) -> Unit)
     ) {
         private val handler = Handler()
 
         @JavascriptInterface   // 공유하기
         fun sauceclipMoveCart(message: String) {
+            val gson = Gson()
+            val cartInfo = gson.fromJson(message, SauceCartInfo::class.java)
             handler.post {
-                sauceflexOnShare.invoke(message)
+                sauceflexOnShare.invoke(cartInfo)
             }
         }
     }
 
     private class SauceclipOnShareJavaScriptInterface(
-        val sauceflexOnShare: ((message: String) -> Unit)
+        val sauceflexOnShare: ((message: SauceShareInfo) -> Unit)
     ) {
         private val handler = Handler()
 
         @JavascriptInterface   // 공유하기
         fun sauceclipOnShare(message: String) {
+            val gson = Gson()
+            val shareInfo = gson.fromJson(message, SauceShareInfo::class.java)
             handler.post {
-                sauceflexOnShare.invoke(message)
+                sauceflexOnShare.invoke(shareInfo)
             }
         }
     }
