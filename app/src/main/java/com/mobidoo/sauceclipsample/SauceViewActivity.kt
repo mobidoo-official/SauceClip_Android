@@ -32,7 +32,7 @@ class SauceViewActivity : Activity() {
 
     private fun init() {
         sauceview = findViewById(R.id.sauceclip)
-        sauceview.setInit("18", "391")
+        sauceview.setInit("23", "183")
         sauceview.setStageMode(true)
         sauceview.setProductActivity(true)
         sauceview.load()

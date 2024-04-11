@@ -7,10 +7,12 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.Toast
+import com.mobidoo.sauceclip.SauceClip
 
 class SecondActivity : Activity() {
     private lateinit var mContext: Context
     private lateinit var btnSauceviewActivity: Button
+    private lateinit var btnSauceactivityActivity: Button
     private lateinit var btnCurationviewActivity: Button
 
     private lateinit var onEnter: CheckBox
@@ -32,6 +34,7 @@ class SecondActivity : Activity() {
         mContext = this
         btnSauceviewActivity = findViewById(R.id.btn_sauceview_activity)
         btnCurationviewActivity = findViewById(R.id.btn_curationview_activity)
+        btnSauceactivityActivity = findViewById(R.id.btn_sauceactivity_activity)
 
         onEnter = findViewById(R.id.check_Enter)
         onMoveExit = findViewById(R.id.check_MoveExit)
@@ -50,6 +53,32 @@ class SecondActivity : Activity() {
             SauceViewActivity.onMoveProduct = onMoveProduct.isChecked
             SauceViewActivity.onMoveCart = onMoveCart.isChecked
             startActivity(intent)
+        }
+
+        btnSauceactivityActivity.setOnClickListener {
+            SauceClip.openClipActivity(
+                mContext,
+                "23",
+                "183",
+                true,
+                true,
+                {
+                    Toast.makeText(mContext, "onEnter", Toast.LENGTH_SHORT).show()
+                },
+                {
+                    it.finish()
+                    Toast.makeText(mContext, "onMoveExit", Toast.LENGTH_SHORT).show()
+                },
+                {
+                    Toast.makeText(mContext, "onShare", Toast.LENGTH_SHORT).show()
+                },
+                {
+                    Toast.makeText(mContext, "onMoveProduct", Toast.LENGTH_SHORT).show()
+                },
+                {
+                    Toast.makeText(mContext, "onMoveCart", Toast.LENGTH_SHORT).show()
+                },
+            )
         }
 
         btnCurationviewActivity.setOnClickListener() {

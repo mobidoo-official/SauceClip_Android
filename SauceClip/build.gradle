@@ -11,7 +11,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        minSdk 26
+        minSdk 24
         targetSdk 33
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -65,7 +65,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.github.mobidoo-official'
                 artifactId = 'SauceClip'
-                version = '1.0.1'
+                version = '1.0.1-hotfix-1'
             }
         }
     }

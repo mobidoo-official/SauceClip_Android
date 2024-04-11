@@ -1,5 +1,6 @@
 package com.mobidoo.sauceclip
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 
@@ -12,7 +13,7 @@ class SauceClip {
             openProductActivity: Boolean = true,
             stageMode: Boolean = false,
             onEnter: (() -> Unit)? = null,
-            onMoveExit: (() -> Unit)? = null,
+            onMoveExit: ((activity: Activity) -> Unit)? = null,
             onShare: ((message: SauceShareInfo) -> Unit)? = null,
             onMoveProduct: ((message: SauceProductInfo) -> Unit)? = null,
             onMoveCart: ((message: SauceCartInfo) -> Unit)? = null,

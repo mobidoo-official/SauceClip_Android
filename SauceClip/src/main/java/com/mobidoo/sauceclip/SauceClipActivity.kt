@@ -1,6 +1,7 @@
 package com.mobidoo.sauceclip
 
 import android.app.Activity
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 
 class SauceClipActivity: Activity() {
@@ -12,7 +13,7 @@ class SauceClipActivity: Activity() {
 
     companion object {
         var sauceclipEnter: (() -> Unit)? = null
-        var sauceclipMoveExit: (() -> Unit)? = null
+        var sauceclipMoveExit: ((activity: Activity) -> Unit)? = null
         var sauceclipOnShare: ((message: SauceShareInfo) -> Unit)? = null
         var sauceclipMoveProduct: ((message: SauceProductInfo) -> Unit)? = null
         var sauceclipMoveCart: ((message: SauceCartInfo) -> Unit)? = null
@@ -25,6 +26,9 @@ class SauceClipActivity: Activity() {
         clipId = intent.getStringExtra("clipId") ?: ""
         stageMode = intent.getBooleanExtra("stageMode", false)
         openProductActivity = intent.getBooleanExtra("openProductActivity", true)
+
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
         init()
     }
 
@@ -40,7 +44,9 @@ class SauceClipActivity: Activity() {
 
     private fun initPlayerCallback() {
         sauceclipView.setOnEnterListener(sauceclipEnter)
-        sauceclipView.setOnMoveExitListener(sauceclipMoveExit)
+        sauceclipView.setOnMoveExitListener {
+            sauceclipMoveExit?.invoke(this)
+        }
         sauceclipView.setOnShareListener(sauceclipOnShare)
         sauceclipView.setOnMoveProductListener(sauceclipMoveProduct)
         sauceclipView.setOnMoveCartListener(sauceclipMoveCart)
