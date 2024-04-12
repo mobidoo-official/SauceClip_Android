@@ -43,8 +43,6 @@ class SauceCurationView @JvmOverloads constructor(
 
         webView.webChromeClient = WebChromeClient()
         webView.settings.userAgentString = webView.settings.userAgentString + " sauce-sdk-android"
-
-        webView.clearCache(true)
     }
 
     fun setInit(partnerId: String, curatioinId: String) {
@@ -61,9 +59,14 @@ class SauceCurationView @JvmOverloads constructor(
     }
 
     fun setHorizontalPadding(padding: Int){
-        horizontalPadding = padding
+        val pixels = dpToPx(padding, context)
+        horizontalPadding = pixels
     }
 
+    private fun dpToPx(dp: Int, context: Context): Int {
+        val density = context.resources.displayMetrics.density
+        return (dp * density).toInt()
+    }
 
     fun load() {
 

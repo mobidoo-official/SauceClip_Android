@@ -29,6 +29,8 @@ class SauceCurationViewActivity : Activity() {
         curationView = findViewById(R.id.curation)
         curationView.setInit("8", "99")
         curationView.setStageMode(true)
+        curationView.setPvVisibility(false)
+        curationView.setHorizontalPadding(10)
         curationView.load()
 
         sampleText = findViewById(R.id.sample_text)
