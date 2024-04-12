@@ -20,6 +20,7 @@ class SauceClipView @JvmOverloads constructor(
     private val webView: WebView
     private var partnerId: String? = null
     private var clipId: String? = null
+    private var curationId: String? = null
     private var stageMode: Boolean = false
     private var openProductActivity: Boolean = true
     private lateinit var mContext: Context
@@ -44,6 +45,7 @@ class SauceClipView @JvmOverloads constructor(
 
         webView.webChromeClient = WebChromeClient()
         webView.settings.userAgentString = webView.settings.userAgentString + " sauce-sdk-android"
+
         mContext = context
     }
 
@@ -58,6 +60,10 @@ class SauceClipView @JvmOverloads constructor(
 
     fun setProductActivity(on: Boolean) {
         openProductActivity = on
+    }
+
+    fun setCurationId(curationId: String) {
+        this.curationId = curationId
     }
 
     fun load() {
@@ -81,12 +87,19 @@ class SauceClipView @JvmOverloads constructor(
             "sauceclipMoveProduct"
         )
 
+        var url = ""
+
         if (stageMode) {
-            webView.loadUrl("https://stage.player.sauceclip.com/player?partnerId=$partnerId&clipId=$clipId")
+            url = "https://stage.player.sauceclip.com/player?partnerId=$partnerId&clipId=$clipId"
         } else {
-            webView.loadUrl("https://player.sauceclip.com/player?partnerId=$partnerId&clipId=$clipId")
+            url = "https://player.sauceclip.com/player?partnerId=$partnerId&clipId=$clipId"
         }
 
+        if (curationId != null) {
+            url += "&curationId=$curationId"
+        }
+
+        webView.loadUrl(url)
     }
 
     fun setOnEnterListener(callback: (() -> Unit)?) {

@@ -20,8 +20,6 @@ class SauceCurationView @JvmOverloads constructor(
     private var curatioinId: String? = null
     private var partnerId: String? = null
     private var stageMode: Boolean = false
-    private var openClipActivity: Boolean = true
-    private lateinit var mContext: Context
 
     var webViewClient: WebViewClient = WebViewClient()
         set(value) {
@@ -43,8 +41,7 @@ class SauceCurationView @JvmOverloads constructor(
 
         webView.webChromeClient = WebChromeClient()
         webView.settings.userAgentString = webView.settings.userAgentString + " sauce-sdk-android"
-
-        mContext = context
+        webView.setOnLongClickListener { true }
     }
 
     fun setInit(partnerId: String, curatioinId: String) {
@@ -56,10 +53,6 @@ class SauceCurationView @JvmOverloads constructor(
         stageMode = on
     }
 
-//    fun setClipActivity(on: Boolean) {
-//        openClipActivity = on
-//    }
-
     fun load() {
 
         if (partnerId == null) {
@@ -69,17 +62,6 @@ class SauceCurationView @JvmOverloads constructor(
         if (curatioinId == null) {
             throw Error("curatioinId is required")
         }
-
-//        webView.addJavascriptInterface(
-//            SauceclipOnMoveBroadcastJavaScriptInterface { broadcastInfo ->
-//                if (openClipActivity) {
-//                    val intent = Intent(mContext, WebActivity::class.java)
-//                    intent.putExtra("link", broadcastInfo.shortUrl)
-//                    mContext.startActivity(intent)
-//                }
-//            },
-//            "sauceclipMoveBroadcast"
-//        )
 
         if (stageMode) {
             webView.loadData(
@@ -144,11 +126,6 @@ class SauceCurationView @JvmOverloads constructor(
             webView.addJavascriptInterface(
                 SauceclipOnMoveBroadcastJavaScriptInterface { broadcastInfo ->
                     callback.invoke(broadcastInfo)
-//                    if (openClipActivity) {
-//                        val intent = Intent(mContext, WebActivity::class.java)
-//                        intent.putExtra("link", broadcastInfo.shortUrl)
-//                        mContext.startActivity(intent)
-//                    }
                 },
                 "sauceclipMoveBroadcast"
             )
