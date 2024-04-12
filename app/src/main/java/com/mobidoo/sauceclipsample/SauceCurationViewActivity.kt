@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
+import com.mobidoo.sauceclip.SauceClip
 import com.mobidoo.sauceclip.SauceClipView
 import com.mobidoo.sauceclip.SauceCurationView
 
@@ -40,6 +41,15 @@ class SauceCurationViewActivity : Activity() {
         sampleText2.text = "YourSauceView.loadUrl(\"live URL\")"
 
         if (onMoveBroadcast) {
+            curationView.setOnMoveBroadcast { message ->
+                SauceClip.openClipActivity(
+                    this,
+                    message.partnerId,
+                    "$message.clipId",
+                    "$message.curationId",
+                )
+            }
+
             curationView.setOnMoveBroadcast { message ->
                 Toast.makeText(
                     this,

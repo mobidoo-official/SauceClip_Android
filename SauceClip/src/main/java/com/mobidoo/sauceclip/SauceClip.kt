@@ -10,6 +10,7 @@ class SauceClip {
             context: Context,
             partnerId: String,
             clipId: String,
+            curationId: String? = null,
             openProductActivity: Boolean = true,
             stageMode: Boolean = false,
             onEnter: (() -> Unit)? = null,
@@ -17,10 +18,12 @@ class SauceClip {
             onShare: ((message: SauceShareInfo) -> Unit)? = null,
             onMoveProduct: ((message: SauceProductInfo) -> Unit)? = null,
             onMoveCart: ((message: SauceCartInfo) -> Unit)? = null,
+            onError: ((message: SauceErrorInfo) -> Unit)? = null,
         ) {
             val intent = Intent(context, SauceClipActivity::class.java)
             intent.putExtra("partnerId", partnerId)
             intent.putExtra("clipId", clipId)
+            intent.putExtra("curationId", curationId)
             intent.putExtra("stageMode", stageMode)
             intent.putExtra("openProductActivity", openProductActivity)
 
@@ -29,6 +32,7 @@ class SauceClip {
             SauceClipActivity.sauceclipOnShare = onShare
             SauceClipActivity.sauceclipMoveProduct = onMoveProduct
             SauceClipActivity.sauceclipMoveCart = onMoveCart
+            SauceClipActivity.sauceclipError = onError
 
             context.startActivity(intent)
         }

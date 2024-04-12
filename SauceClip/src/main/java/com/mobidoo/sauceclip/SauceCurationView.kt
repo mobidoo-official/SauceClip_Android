@@ -20,6 +20,8 @@ class SauceCurationView @JvmOverloads constructor(
     private var curatioinId: String? = null
     private var partnerId: String? = null
     private var stageMode: Boolean = false
+    private var pvVisibility: Boolean = true
+    private var horizontalPadding: Int = 0
 
     var webViewClient: WebViewClient = WebViewClient()
         set(value) {
@@ -41,7 +43,8 @@ class SauceCurationView @JvmOverloads constructor(
 
         webView.webChromeClient = WebChromeClient()
         webView.settings.userAgentString = webView.settings.userAgentString + " sauce-sdk-android"
-        webView.setOnLongClickListener { true }
+
+        webView.clearCache(true)
     }
 
     fun setInit(partnerId: String, curatioinId: String) {
@@ -53,6 +56,15 @@ class SauceCurationView @JvmOverloads constructor(
         stageMode = on
     }
 
+    fun setPvVisibility(on: Boolean) {
+        pvVisibility = on
+    }
+
+    fun setHorizontalPadding(padding: Int){
+        horizontalPadding = padding
+    }
+
+
     fun load() {
 
         if (partnerId == null) {
@@ -61,6 +73,16 @@ class SauceCurationView @JvmOverloads constructor(
 
         if (curatioinId == null) {
             throw Error("curatioinId is required")
+        }
+
+        var pvOption = ""
+        if (!pvVisibility) {
+            pvOption = "window.SauceClipCollectionLib.setCurationClipPvStyle('{\"display\": \"none\"}')"
+        }
+
+        var paddingOption = ""
+        if (horizontalPadding > 0) {
+            paddingOption = "window.SauceClipCollectionLib.setCurationHorizontalContentsStyle('{\"padding-left\": \"${horizontalPadding}px\", \"padding-right\": \"${horizontalPadding}px\"}')"
         }
 
         if (stageMode) {
@@ -76,6 +98,8 @@ class SauceCurationView @JvmOverloads constructor(
     window.addEventListener('load', () => {
       const partnerId = '$partnerId'
       window.SauceClipCollectionLib.setInit({ partnerId })
+      $pvOption
+      $paddingOption
       window.SauceClipCollectionLib.loadCuration({ curationId: '$curatioinId', elementId: 'sauce_clip_curation' })
     })
   </script>
@@ -103,6 +127,8 @@ class SauceCurationView @JvmOverloads constructor(
     window.addEventListener('load', () => {
       const partnerId = '$partnerId'
       window.SauceClipCollectionLib.setInit({ partnerId })
+      $pvOption
+      $paddingOption
       window.SauceClipCollectionLib.loadCuration({ curationId: '$curatioinId', elementId: 'sauce_clip_curation' })
     })
   </script>
@@ -146,6 +172,5 @@ class SauceCurationView @JvmOverloads constructor(
             }
         }
     }
-
 
 }

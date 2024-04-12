@@ -7,6 +7,7 @@ import android.os.Bundle
 class SauceClipActivity: Activity() {
     private var partnerId: String = ""
     private var clipId: String = ""
+    private var curationId: String? = null
     private var stageMode: Boolean = false
     private var openProductActivity: Boolean = true
     private lateinit var sauceclipView: SauceClipView
@@ -17,6 +18,7 @@ class SauceClipActivity: Activity() {
         var sauceclipOnShare: ((message: SauceShareInfo) -> Unit)? = null
         var sauceclipMoveProduct: ((message: SauceProductInfo) -> Unit)? = null
         var sauceclipMoveCart: ((message: SauceCartInfo) -> Unit)? = null
+        var sauceclipError: ((message: SauceErrorInfo) -> Unit)? = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,6 +26,7 @@ class SauceClipActivity: Activity() {
         setContentView(R.layout.activity_sauceclip)
         partnerId = intent.getStringExtra("partnerId") ?: ""
         clipId = intent.getStringExtra("clipId") ?: ""
+        curationId = intent.getStringExtra("curationId") ?: null
         stageMode = intent.getBooleanExtra("stageMode", false)
         openProductActivity = intent.getBooleanExtra("openProductActivity", true)
 
@@ -50,6 +53,7 @@ class SauceClipActivity: Activity() {
         sauceclipView.setOnShareListener(sauceclipOnShare)
         sauceclipView.setOnMoveProductListener(sauceclipMoveProduct)
         sauceclipView.setOnMoveCartListener(sauceclipMoveCart)
+        sauceclipView.setOnErrorListener(sauceclipError)
     }
 
 }

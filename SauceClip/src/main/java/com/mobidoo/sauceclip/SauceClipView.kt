@@ -49,9 +49,10 @@ class SauceClipView @JvmOverloads constructor(
         mContext = context
     }
 
-    fun setInit(partnerId: String, clipId: String) {
+    fun setInit(partnerId: String, clipId: String, curationId: String? = null) {
         this.partnerId = partnerId
         this.clipId = clipId
+        this.curationId = curationId
     }
 
     fun setStageMode(on: Boolean) {
@@ -60,10 +61,6 @@ class SauceClipView @JvmOverloads constructor(
 
     fun setProductActivity(on: Boolean) {
         openProductActivity = on
-    }
-
-    fun setCurationId(curationId: String) {
-        this.curationId = curationId
     }
 
     fun load() {
@@ -157,6 +154,16 @@ class SauceClipView @JvmOverloads constructor(
         }
     }
 
+    fun setOnErrorListener(callback: ((message: SauceErrorInfo) -> Unit)?) {
+        webView.removeJavascriptInterface("sauceclipError")
+        if (callback != null) {
+            webView.addJavascriptInterface(
+                SauceclipOnErrorJavaScriptInterface(callback),
+                "sauceclipError"
+            )
+        }
+    }
+
     private class SauceclipEnterJavaScriptInterface(
         val sauceflexEnter: (() -> Unit),
     ) {
@@ -224,6 +231,21 @@ class SauceClipView @JvmOverloads constructor(
             val shareInfo = gson.fromJson(message, SauceShareInfo::class.java)
             handler.post {
                 sauceflexOnShare.invoke(shareInfo)
+            }
+        }
+    }
+
+    private class SauceclipOnErrorJavaScriptInterface(
+        val sauceflexOnMovebroadcast: ((message: SauceErrorInfo) -> Unit)
+    ) {
+        private val handler = Handler()
+
+        @JavascriptInterface   // 클립 이동
+        fun sauceclipError(message: String) {
+            val gson = Gson()
+            val broadcastInfo = gson.fromJson(message, SauceErrorInfo::class.java)
+            handler.post {
+                sauceflexOnMovebroadcast.invoke(broadcastInfo)
             }
         }
     }

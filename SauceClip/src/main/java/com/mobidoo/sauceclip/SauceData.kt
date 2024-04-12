@@ -69,3 +69,14 @@ data class SauceBroadcastInfo(
     val partnerId: String,
     val shortUrl: String?
 )
+
+/**
+ * 에러 정보를 나타내는 데이터 클래스입니다.
+ *
+ * @property errorType 에러의 타입입니다.
+ * @property errorDetails 에러의 상세 정보입니다.
+ */
+data class SauceErrorInfo(
+    val errorType: String,
+    val errorDetails: String
+)
