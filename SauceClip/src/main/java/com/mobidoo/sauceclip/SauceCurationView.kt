@@ -1,9 +1,10 @@
 package com.mobidoo.sauceclip
 
 import android.content.Context
-import android.content.Intent
 import android.os.Handler
 import android.util.AttributeSet
+import android.util.Log
+import android.view.MotionEvent
 import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
@@ -11,6 +12,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
 import com.google.gson.Gson
+
 
 class SauceCurationView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -22,6 +24,11 @@ class SauceCurationView @JvmOverloads constructor(
     private var stageMode: Boolean = false
     private var pvVisibility: Boolean = true
     private var horizontalPadding: Int = 0
+    private var previewAutoplay: Boolean = false
+    private var lastX = 0f
+    private var lastY = 0f
+    private var deltaX = 0f
+    private var deltaY = 0f
 
     var webViewClient: WebViewClient = WebViewClient()
         set(value) {
@@ -43,6 +50,28 @@ class SauceCurationView @JvmOverloads constructor(
 
         webView.webChromeClient = WebChromeClient()
         webView.settings.userAgentString = webView.settings.userAgentString + " sauce-sdk-android"
+
+        /// 웹뷰에서 가로 스크롤이 있을 경우 가로 스크롤중 상위의 스크롤뷰에서 세로스크롤이 발생하지 않도록 설정
+        webView.setOnTouchListener { v, ev -> when (ev.getAction()) {
+                MotionEvent.ACTION_DOWN -> {
+                    lastX = ev.getX()
+                    lastY = ev.getY()
+                    // ACTION_DOWN에서는 기본적으로 이벤트를 가로채지 않음
+                    v.parent.requestDisallowInterceptTouchEvent(false)
+                    false
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    deltaX = Math.abs(ev.getX() - lastX)
+                    deltaY = Math.abs(ev.getY() - lastY)
+
+                    // X축 이동이 Y축 이동보다 클 때 true를 반환하여 수평 스크롤 이벤트를 가로챈다
+                    v.parent.requestDisallowInterceptTouchEvent(deltaX > deltaY)
+                    deltaX > deltaY
+                }
+            }
+            false
+        }
     }
 
     fun setInit(partnerId: String, curatioinId: String) {
@@ -58,9 +87,13 @@ class SauceCurationView @JvmOverloads constructor(
         pvVisibility = on
     }
 
-    fun setHorizontalPadding(padding: Int){
+    fun setHorizontalPadding(padding: Int) {
         val pixels = dpToPx(padding, context)
         horizontalPadding = pixels
+    }
+
+    fun setPreviewAutoplay(on: Boolean) {
+        previewAutoplay = on
     }
 
     private fun dpToPx(dp: Int, context: Context): Int {
@@ -80,12 +113,23 @@ class SauceCurationView @JvmOverloads constructor(
 
         var pvOption = ""
         if (!pvVisibility) {
-            pvOption = "window.SauceClipCollectionLib.setCurationClipPvStyle('{\"display\": \"none\"}')"
+            pvOption =
+                "window.SauceClipCollectionLib.setCurationClipPvStyle('{\"display\": \"none\"}')"
         }
 
         var paddingOption = ""
         if (horizontalPadding > 0) {
-            paddingOption = "window.SauceClipCollectionLib.setCurationHorizontalContentsStyle('{\"padding-left\": \"${horizontalPadding}px\", \"padding-right\": \"${horizontalPadding}px\"}')"
+            paddingOption =
+                "window.SauceClipCollectionLib.setCurationHorizontalContentsStyle('{\"padding-left\": \"${horizontalPadding}px\", \"padding-right\": \"${horizontalPadding}px\"}')"
+        }
+
+        var previewAutoplayOption = ""
+        if (previewAutoplay) {
+            previewAutoplayOption =
+                "window.SauceClipCollectionLib.setCurationClipPreviewAutoplay(true)"
+        } else {
+            previewAutoplayOption =
+                "window.SauceClipCollectionLib.setCurationClipPreviewAutoplay(false)"
         }
 
         if (stageMode) {
@@ -102,7 +146,8 @@ class SauceCurationView @JvmOverloads constructor(
       const partnerId = '$partnerId'
       window.SauceClipCollectionLib.setInit({ partnerId })
       $pvOption
-      $paddingOption
+      $paddingOption     
+      $previewAutoplayOption
       window.SauceClipCollectionLib.loadCuration({ curationId: '$curatioinId', elementId: 'sauce_clip_curation' })
     })
   </script>
@@ -117,7 +162,7 @@ class SauceCurationView @JvmOverloads constructor(
 </style>
 </html>""", "text/html", "UTF-8"
             )
-        }else {
+        } else {
             webView.loadData(
                 """<!DOCTYPE html>
 <html lang="en">
@@ -132,6 +177,7 @@ class SauceCurationView @JvmOverloads constructor(
       window.SauceClipCollectionLib.setInit({ partnerId })
       $pvOption
       $paddingOption
+      $previewAutoplayOption
       window.SauceClipCollectionLib.loadCuration({ curationId: '$curatioinId', elementId: 'sauce_clip_curation' })
     })
   </script>

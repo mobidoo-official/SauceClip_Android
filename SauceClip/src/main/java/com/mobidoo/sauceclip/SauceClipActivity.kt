@@ -3,6 +3,7 @@ package com.mobidoo.sauceclip
 import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.Log
 
 class SauceClipActivity: Activity() {
     private var partnerId: String = ""
@@ -29,7 +30,6 @@ class SauceClipActivity: Activity() {
         curationId = intent.getStringExtra("curationId") ?: null
         stageMode = intent.getBooleanExtra("stageMode", false)
         openProductActivity = intent.getBooleanExtra("openProductActivity", true)
-
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         init()
@@ -37,7 +37,7 @@ class SauceClipActivity: Activity() {
 
     private fun init() {
         sauceclipView = findViewById(R.id.sauceclip)
-        sauceclipView.setInit(partnerId, clipId)
+        sauceclipView.setInit(partnerId, clipId, curationId)
         sauceclipView.setStageMode(stageMode)
         sauceclipView.setProductActivity(openProductActivity)
         sauceclipView.load()

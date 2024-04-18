@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.util.AttributeSet
+import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
@@ -249,6 +250,5 @@ class SauceClipView @JvmOverloads constructor(
             }
         }
     }
-
 
 }

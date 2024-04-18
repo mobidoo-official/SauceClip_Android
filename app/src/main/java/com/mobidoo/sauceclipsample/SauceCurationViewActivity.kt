@@ -27,7 +27,7 @@ class SauceCurationViewActivity : Activity() {
 
     private fun init() {
         curationView = findViewById(R.id.curation)
-        curationView.setInit("8", "99")
+        curationView.setInit("1", "189")
         curationView.setStageMode(true)
         curationView.setPvVisibility(false)
         curationView.setHorizontalPadding(10)
@@ -44,21 +44,24 @@ class SauceCurationViewActivity : Activity() {
 
         if (onMoveBroadcast) {
             curationView.setOnMoveBroadcast { message ->
+
                 SauceClip.openClipActivity(
                     this,
                     message.partnerId,
-                    "$message.clipId",
-                    "$message.curationId",
+                    "${message.clipId}",
+                    "${message.curationId}",
+                    true,
+                    true,
                 )
             }
 
-            curationView.setOnMoveBroadcast { message ->
-                Toast.makeText(
-                    this,
-                    "onMoveBroadcast",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+//            curationView.setOnMoveBroadcast { message ->
+//                Toast.makeText(
+//                    this,
+//                    "onMoveBroadcast",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            }
         }
 
     }
