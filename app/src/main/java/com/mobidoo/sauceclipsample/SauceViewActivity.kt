@@ -15,6 +15,11 @@ class SauceViewActivity : Activity() {
     private lateinit var sampleText: TextView
     private lateinit var sampleText2: TextView
 
+    private var partnerId: String = ""
+    private var clipId: String = ""
+    private var curationId: String? = null
+    private var stageMode: Boolean = true
+
     companion object {
         var onEnter: Boolean = false
         var onMoveExit: Boolean = false
@@ -27,13 +32,19 @@ class SauceViewActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sauceview)
+
+        partnerId = intent.getStringExtra("partnerId") ?: ""
+        clipId = intent.getStringExtra("clipId") ?: ""
+        curationId = intent.getStringExtra("curationId")
+        stageMode = intent.getBooleanExtra("stageMode", true)
+
         init()
     }
 
     private fun init() {
         sauceview = findViewById(R.id.sauceclip)
-        sauceview.setInit("23", "183")
-        sauceview.setStageMode(true)
+        sauceview.setInit(partnerId, clipId, if (curationId != null && curationId!!.isNotBlank()) curationId else null)
+        sauceview.setStageMode(stageMode)
         sauceview.setProductActivity(true)
         sauceview.load()
 

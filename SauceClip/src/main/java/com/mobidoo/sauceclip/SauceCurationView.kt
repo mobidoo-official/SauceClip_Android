@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.MotionEvent
 import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
-import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
@@ -18,17 +17,14 @@ class SauceCurationView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
-    private val webView: WebView
+    private val webView: ObservableWebView
     private var curatioinId: String? = null
     private var partnerId: String? = null
     private var stageMode: Boolean = false
     private var pvVisibility: Boolean = true
     private var horizontalPadding: Int = 0
     private var previewAutoplay: Boolean = false
-    private var lastX = 0f
-    private var lastY = 0f
-    private var deltaX = 0f
-    private var deltaY = 0f
+
 
     var webViewClient: WebViewClient = WebViewClient()
         set(value) {
@@ -38,9 +34,7 @@ class SauceCurationView @JvmOverloads constructor(
 
     init {
         // 웹뷰를 생성하고 설정
-        webView = WebView(context)
-        val webSettings: WebSettings = webView.settings
-        webSettings.javaScriptEnabled = true // JavaScript를 사용할 수 있도록 설정
+        webView = ObservableWebView(context)
 
         // 웹뷰를 FrameLayout에 추가
         addView(webView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
@@ -51,23 +45,19 @@ class SauceCurationView @JvmOverloads constructor(
         webView.webChromeClient = WebChromeClient()
         webView.settings.userAgentString = webView.settings.userAgentString + " sauce-sdk-android"
 
-        /// 웹뷰에서 가로 스크롤이 있을 경우 가로 스크롤중 상위의 스크롤뷰에서 세로스크롤이 발생하지 않도록 설정
-        webView.setOnTouchListener { v, ev -> when (ev.getAction()) {
+        webView.setOnTouchListener { v, ev ->
+            when (ev.getAction()) {
                 MotionEvent.ACTION_DOWN -> {
-                    lastX = ev.getX()
-                    lastY = ev.getY()
-                    // ACTION_DOWN에서는 기본적으로 이벤트를 가로채지 않음
-                    v.parent.requestDisallowInterceptTouchEvent(false)
                     false
                 }
-
                 MotionEvent.ACTION_MOVE -> {
-                    deltaX = Math.abs(ev.getX() - lastX)
-                    deltaY = Math.abs(ev.getY() - lastY)
-
                     // X축 이동이 Y축 이동보다 클 때 true를 반환하여 수평 스크롤 이벤트를 가로챈다
-                    v.parent.requestDisallowInterceptTouchEvent(deltaX > deltaY)
-                    deltaX > deltaY
+                    // v.parent.requestDisallowInterceptTouchEvent(deltaX > deltaY)
+                    if (webView.isCurrentlyScrolling()){
+                        v.parent.requestDisallowInterceptTouchEvent(true)
+                    }else {
+                        v.parent.requestDisallowInterceptTouchEvent(false)
+                    }
                 }
             }
             false
@@ -140,15 +130,15 @@ class SauceCurationView @JvmOverloads constructor(
   <script src="https://stage.showcase.sauceclip.com/static/js/SauceClipCollectionLib.js"></script>
 </head>
 <body>
-  <div id="sauce_clip_curation"></div>
+  <div id="sauce_clip_curation_sdk_aos"></div>
   <script>
     window.addEventListener('load', () => {
       const partnerId = '$partnerId'
       window.SauceClipCollectionLib.setInit({ partnerId })
       $pvOption
-      $paddingOption     
+      $paddingOption
       $previewAutoplayOption
-      window.SauceClipCollectionLib.loadCuration({ curationId: '$curatioinId', elementId: 'sauce_clip_curation' })
+      window.SauceClipCollectionLib.loadCuration({ curationId: '$curatioinId', elementId: 'sauce_clip_curation_sdk_aos' })
     })
   </script>
 </body>
@@ -157,7 +147,6 @@ class SauceCurationView @JvmOverloads constructor(
     padding: 0;
     margin: 0;
     height: fit-content;
-    overflow-x: hidden;
   }
 </style>
 </html>""", "text/html", "UTF-8"
@@ -187,7 +176,6 @@ class SauceCurationView @JvmOverloads constructor(
     padding: 0;
     margin: 0;
     height: fit-content;
-    overflow-x: hidden;
   }
 </style>
 </html>""", "text/html", "UTF-8"
@@ -207,6 +195,18 @@ class SauceCurationView @JvmOverloads constructor(
         }
     }
 
+    fun setOnCollectionError(callback: ((message: SauceErrorInfo) -> Unit)?) {
+        webView.removeJavascriptInterface("sauceclipCollectionError")
+        if (callback != null) {
+            webView.addJavascriptInterface(
+                SauceclipOnCollectionErrorJavaScriptInterface { errorInfo ->
+                    callback.invoke(errorInfo)
+                },
+                "sauceclipCollectionError"
+            )
+        }
+    }
+
     private class SauceclipOnMoveBroadcastJavaScriptInterface(
         val sauceflexOnMovebroadcast: ((message: SauceBroadcastInfo) -> Unit)
     ) {
@@ -218,6 +218,21 @@ class SauceCurationView @JvmOverloads constructor(
             val broadcastInfo = gson.fromJson(message, SauceBroadcastInfo::class.java)
             handler.post {
                 sauceflexOnMovebroadcast.invoke(broadcastInfo)
+            }
+        }
+    }
+
+    private class SauceclipOnCollectionErrorJavaScriptInterface(
+        val sauceflexOnCollectionError: ((message: SauceErrorInfo) -> Unit)
+    ) {
+        private val handler = Handler()
+
+        @JavascriptInterface   // 클립 이동
+        fun sauceclipCollectionError(message: String) {
+            val gson = Gson()
+            val errorInfo = gson.fromJson(message, SauceErrorInfo::class.java)
+            handler.post {
+                sauceflexOnCollectionError.invoke(errorInfo)
             }
         }
     }

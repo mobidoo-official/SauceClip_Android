@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.Toast
@@ -15,6 +16,11 @@ class SecondActivity : Activity() {
     private lateinit var btnSauceactivityActivity: Button
     private lateinit var btnCurationviewActivity: Button
 
+    private var partnerId: String = ""
+    private var clipId: String? = null
+    private var curationId: String? = null
+    private var stageMode: Boolean = true
+
     private lateinit var onEnter: CheckBox
     private lateinit var onMoveExit: CheckBox
     private lateinit var onMoveLogin: CheckBox
@@ -23,10 +29,15 @@ class SecondActivity : Activity() {
     private lateinit var onMoveCart: CheckBox
     private lateinit var onMoveBroadcast: CheckBox
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
+
+        partnerId = intent.getStringExtra("partnerId") ?: ""
+        clipId = intent.getStringExtra("clipId")
+        curationId = intent.getStringExtra("curationId")
+        stageMode = intent.getBooleanExtra("stageMode", true)
+
         init()
     }
 
@@ -45,47 +56,90 @@ class SecondActivity : Activity() {
         onMoveBroadcast = findViewById(R.id.check_MoveBroadcast)
 
         btnSauceviewActivity.setOnClickListener() {
-            val intent = Intent(this, SauceViewActivity::class.java)
-            SauceViewActivity.onEnter = onEnter.isChecked
-            SauceViewActivity.onMoveExit = onMoveExit.isChecked
-            SauceViewActivity.onMoveLogin = onMoveLogin.isChecked
-            SauceViewActivity.onShare = onShare.isChecked
-            SauceViewActivity.onMoveProduct = onMoveProduct.isChecked
-            SauceViewActivity.onMoveCart = onMoveCart.isChecked
-            startActivity(intent)
+            if (clipId != null && clipId!!.isNotBlank()){
+                val intent = Intent(this, SauceViewActivity::class.java)
+                SauceViewActivity.onEnter = onEnter.isChecked
+                SauceViewActivity.onMoveExit = onMoveExit.isChecked
+                SauceViewActivity.onMoveLogin = onMoveLogin.isChecked
+                SauceViewActivity.onShare = onShare.isChecked
+                SauceViewActivity.onMoveProduct = onMoveProduct.isChecked
+                SauceViewActivity.onMoveCart = onMoveCart.isChecked
+                intent.putExtra("partnerId", partnerId)
+                intent.putExtra("clipId", clipId)
+                intent.putExtra("curationId", curationId)
+                intent.putExtra("stageMode", stageMode)
+                startActivity(intent)
+            } else {
+                Toast.makeText(mContext, "clipId is null", Toast.LENGTH_SHORT).show()
+            }
+
         }
 
         btnSauceactivityActivity.setOnClickListener {
-            SauceClip.openClipActivity(
-                mContext,
-                "23",
-                "183",
-                null,
-                true,
-                true,
-                {
-                    Toast.makeText(mContext, "onEnter", Toast.LENGTH_SHORT).show()
-                },
-                {
-                    it.finish()
-                    Toast.makeText(mContext, "onMoveExit", Toast.LENGTH_SHORT).show()
-                },
-                {
-                    Toast.makeText(mContext, "onShare", Toast.LENGTH_SHORT).show()
-                },
-                {
-                    Toast.makeText(mContext, "onMoveProduct", Toast.LENGTH_SHORT).show()
-                },
-                {
-                    Toast.makeText(mContext, "onMoveCart", Toast.LENGTH_SHORT).show()
-                },
-            )
+            if (clipId != null && clipId!!.isNotBlank()){
+                SauceClip.openClipActivity(
+                    mContext,
+                    partnerId,
+                    clipId!!,
+                    if (curationId != null && curationId!!.isNotBlank()) curationId else null,
+                    true,
+                    stageMode,
+                    if (onEnter.isChecked) {
+                        {
+                            Toast.makeText(mContext, "onEnter", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        null
+                    },
+                    if (onMoveExit.isChecked) {
+                        {
+                            it.finish()
+                            Toast.makeText(mContext, "onMoveExit", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        null
+                    },
+                    if (onShare.isChecked) {
+                        {
+                            Toast.makeText(mContext, "onShare", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        null
+                    },
+                    if (onMoveProduct.isChecked) {
+                        {
+                            Toast.makeText(mContext, "onMoveProduct", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        null
+                    },
+                    if (onMoveCart.isChecked) {
+                        {
+                            Toast.makeText(mContext, "onMoveCart", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        null
+                    },
+                    {
+                        Toast.makeText(mContext, "onError", Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }else {
+                Toast.makeText(mContext, "clipId is null", Toast.LENGTH_SHORT).show()
+            }
         }
 
         btnCurationviewActivity.setOnClickListener() {
-            val intent = Intent(this, SauceCurationViewActivity::class.java)
-            SauceCurationViewActivity.onMoveBroadcast = onMoveBroadcast.isChecked
-            startActivity(intent)
+            if (curationId != null && curationId!!.isNotBlank()){
+                val intent = Intent(this, SauceCurationViewActivity::class.java)
+                SauceCurationViewActivity.onMoveBroadcast = onMoveBroadcast.isChecked
+                intent.putExtra("partnerId", partnerId)
+                intent.putExtra("curationId", curationId)
+                intent.putExtra("stageMode", stageMode)
+                startActivity(intent)
+            } else {
+                Toast.makeText(mContext, "curationId is null", Toast.LENGTH_SHORT).show()
+            }
         }
 
     }

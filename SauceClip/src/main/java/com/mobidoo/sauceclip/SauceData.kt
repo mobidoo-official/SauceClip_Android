@@ -75,8 +75,10 @@ data class SauceBroadcastInfo(
  *
  * @property errorType 에러의 타입입니다.
  * @property errorDetails 에러의 상세 정보입니다.
+ * @property errorCode 에러의 코드입니다.
  */
 data class SauceErrorInfo(
-    val errorType: String,
-    val errorDetails: String
+    val errorType: String?,
+    val errorDetails: String?,
+    val errorCode: String?,
 )

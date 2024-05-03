@@ -156,11 +156,11 @@ class SauceClipView @JvmOverloads constructor(
     }
 
     fun setOnErrorListener(callback: ((message: SauceErrorInfo) -> Unit)?) {
-        webView.removeJavascriptInterface("sauceclipError")
+        webView.removeJavascriptInterface("sauceclipPlayerError")
         if (callback != null) {
             webView.addJavascriptInterface(
                 SauceclipOnErrorJavaScriptInterface(callback),
-                "sauceclipError"
+                "sauceclipPlayerError"
             )
         }
     }
@@ -242,11 +242,11 @@ class SauceClipView @JvmOverloads constructor(
         private val handler = Handler()
 
         @JavascriptInterface   // 클립 이동
-        fun sauceclipError(message: String) {
+        fun sauceclipPlayerError(message: String) {
             val gson = Gson()
-            val broadcastInfo = gson.fromJson(message, SauceErrorInfo::class.java)
+            val sauceclipErrorInfo = gson.fromJson(message, SauceErrorInfo::class.java)
             handler.post {
-                sauceflexOnMovebroadcast.invoke(broadcastInfo)
+                sauceflexOnMovebroadcast.invoke(sauceclipErrorInfo)
             }
         }
     }

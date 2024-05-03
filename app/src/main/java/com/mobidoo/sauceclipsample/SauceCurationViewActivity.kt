@@ -6,7 +6,6 @@ import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import com.mobidoo.sauceclip.SauceClip
-import com.mobidoo.sauceclip.SauceClipView
 import com.mobidoo.sauceclip.SauceCurationView
 
 class SauceCurationViewActivity : Activity() {
@@ -15,6 +14,10 @@ class SauceCurationViewActivity : Activity() {
     private lateinit var sampleText: TextView
     private lateinit var sampleText2: TextView
 
+    private var partnerId: String = ""
+    private var curationId: String = ""
+    private var stageMode: Boolean = true
+
     companion object {
         var onMoveBroadcast: Boolean = false
     }
@@ -22,25 +25,34 @@ class SauceCurationViewActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_curationview)
+
+        partnerId = intent.getStringExtra("partnerId") ?: ""
+        curationId = intent.getStringExtra("curationId") ?: ""
+        stageMode = intent.getBooleanExtra("stageMode", true)
+
         init()
     }
 
     private fun init() {
         curationView = findViewById(R.id.curation)
-        curationView.setInit("1", "189")
-        curationView.setStageMode(true)
+//        curationView.setInit("1", "189")
+        curationView.setInit(partnerId, curationId)
+        curationView.setStageMode(stageMode)
         curationView.setPvVisibility(false)
         curationView.setHorizontalPadding(10)
+        curationView.setPreviewAutoplay(true)
         curationView.load()
 
         sampleText = findViewById(R.id.sample_text)
-        sampleText.text = """<com.mobidoo.sauceclip.SauceClipView
-            android:id="@+id/sauceclip"
-            android:layout_width="180dp"
-            android:layout_height="320dp"/>"""
+        sampleText.text = """<com.mobidoo.sauceclip.SauceCurationView
+            android:id="@+id/curation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>"""
 
         sampleText2 = findViewById(R.id.sample_text2)
-        sampleText2.text = "YourSauceView.loadUrl(\"live URL\")"
+        sampleText2.text = """YourCurationView.setInit("partner id", "curation id")
+            YourCurationView.load()
+        """.trimMargin()
 
         if (onMoveBroadcast) {
             curationView.setOnMoveBroadcast { message ->
@@ -52,16 +64,20 @@ class SauceCurationViewActivity : Activity() {
                     "${message.curationId}",
                     true,
                     true,
+                    null,
+                    { it.finish() }
                 )
             }
 
-//            curationView.setOnMoveBroadcast { message ->
-//                Toast.makeText(
-//                    this,
-//                    "onMoveBroadcast",
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//            }
+            curationView.setOnCollectionError { message ->
+
+                Log.e("SauceCurationViewActivity !?!?", "onCollectionError $message")
+                Toast.makeText(
+                    this,
+                    "onCollectionError",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
 
     }
