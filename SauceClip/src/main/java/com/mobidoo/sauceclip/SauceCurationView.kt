@@ -159,7 +159,7 @@ class SauceCurationView @JvmOverloads constructor(
   <script src="https://showcase.sauceclip.com/static/js/SauceClipCollectionLib.js"></script>
 </head>
 <body>
-  <div id="sauce_clip_curation"></div>
+  <div id="sauce_clip_curation_sdk_aos"></div>
   <script>
     window.addEventListener('load', () => {
       const partnerId = '$partnerId'
@@ -167,7 +167,7 @@ class SauceCurationView @JvmOverloads constructor(
       $pvOption
       $paddingOption
       $previewAutoplayOption
-      window.SauceClipCollectionLib.loadCuration({ curationId: '$curatioinId', elementId: 'sauce_clip_curation' })
+      window.SauceClipCollectionLib.loadCuration({ curationId: '$curatioinId', elementId: 'sauce_clip_curation_sdk_aos' })
     })
   </script>
 </body>

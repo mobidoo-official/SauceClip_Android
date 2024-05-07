@@ -65,7 +65,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.github.mobidoo-official'
                 artifactId = 'SauceClip'
-                version = '1.0.1-hotfix-4'
+                version = '1.0.1-hotfix-5'
             }
         }
     }
