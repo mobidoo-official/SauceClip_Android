@@ -35,7 +35,6 @@ class SauceCurationViewActivity : Activity() {
 
     private fun init() {
         curationView = findViewById(R.id.curation)
-//        curationView.setInit("1", "189")
         curationView.setInit(partnerId, curationId)
         curationView.setStageMode(stageMode)
         curationView.setPvVisibility(false)
@@ -56,27 +55,30 @@ class SauceCurationViewActivity : Activity() {
 
         if (onMoveBroadcast) {
             curationView.setOnMoveBroadcast { message ->
-
                 SauceClip.openClipActivity(
                     this,
                     message.partnerId,
                     "${message.clipId}",
                     "${message.curationId}",
                     true,
-                    true,
+                    stageMode,
+                    {
+//                        it.pipOn()
+                    },
+                    { it.finish() },
                     null,
-                    { it.finish() }
+                    { productInfo, clipActivity ->
+                        clipActivity.pipOn()
+                    },
+                    { cartInfo, clipActivity -> },
+                    { errorInfo ->
+
+                    }
                 )
             }
 
             curationView.setOnCollectionError { message ->
 
-                Log.e("SauceCurationViewActivity !?!?", "onCollectionError $message")
-                Toast.makeText(
-                    this,
-                    "onCollectionError",
-                    Toast.LENGTH_SHORT
-                ).show()
             }
         }
 

@@ -2,6 +2,7 @@ package com.mobidoo.sauceclip
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Handler
 import android.util.AttributeSet
 import android.util.Log
@@ -98,6 +99,20 @@ class SauceClipView @JvmOverloads constructor(
         }
 
         webView.loadUrl(url)
+    }
+
+    fun hidePlayerUi() {
+        webView.evaluateJavascript(
+            "dispatchEvent(sauceclipPIP(true))",
+            null
+        )
+    }
+
+    fun showPlayerUi() {
+        webView.evaluateJavascript(
+            "dispatchEvent(sauceclipPIP(false))",
+            null
+        )
     }
 
     fun setOnEnterListener(callback: (() -> Unit)?) {

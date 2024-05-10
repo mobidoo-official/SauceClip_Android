@@ -107,14 +107,14 @@ class SecondActivity : Activity() {
                         null
                     },
                     if (onMoveProduct.isChecked) {
-                        {
+                        { productInfo, clipActivity ->
                             Toast.makeText(mContext, "onMoveProduct", Toast.LENGTH_SHORT).show()
                         }
                     } else {
                         null
                     },
                     if (onMoveCart.isChecked) {
-                        {
+                        { cartInfo, clipActivity ->
                             Toast.makeText(mContext, "onMoveCart", Toast.LENGTH_SHORT).show()
                         }
                     } else {
