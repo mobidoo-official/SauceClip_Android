@@ -25,7 +25,6 @@ class SauceCurationView @JvmOverloads constructor(
     private var horizontalPadding: Int = 0
     private var previewAutoplay: Boolean = false
 
-
     var webViewClient: WebViewClient = WebViewClient()
         set(value) {
             field = value
@@ -92,7 +91,6 @@ class SauceCurationView @JvmOverloads constructor(
     }
 
     fun load() {
-
         if (partnerId == null) {
             throw Error("partnerId is required")
         }

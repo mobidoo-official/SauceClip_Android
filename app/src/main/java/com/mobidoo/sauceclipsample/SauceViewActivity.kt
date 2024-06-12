@@ -27,6 +27,7 @@ class SauceViewActivity : Activity() {
         var onShare: Boolean = false
         var onMoveProduct: Boolean = false
         var onMoveCart: Boolean = false
+        var onAddCart: Boolean = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,10 +92,20 @@ class SauceViewActivity : Activity() {
         }
 
         if (onMoveCart) {
-            sauceview.setOnMoveCartListener { message ->
+            sauceview.setOnMoveCartListener {
                 Toast.makeText(
                     this,
                     "onMoveCart",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        if (onAddCart) {
+            sauceview.setOnAddCartListener { message ->
+                Toast.makeText(
+                    this,
+                    "onAddCart",
                     Toast.LENGTH_SHORT
                 ).show()
             }

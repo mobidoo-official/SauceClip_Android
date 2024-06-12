@@ -160,12 +160,23 @@ class SauceClipView @JvmOverloads constructor(
         )
     }
 
-    fun setOnMoveCartListener(callback: ((message: SauceCartInfo) -> Unit)?) {
+
+    fun setOnMoveCartListener(callback: (() -> Unit)?) {
         webView.removeJavascriptInterface("sauceclipMoveCart")
         if (callback != null) {
             webView.addJavascriptInterface(
                 SauceclipMoveCartJavaScriptInterface(callback),
                 "sauceclipMoveCart"
+            )
+        }
+    }
+
+    fun setOnAddCartListener(callback: ((message: SauceCartInfo) -> Unit)?) {
+        webView.removeJavascriptInterface("sauceclipAddCart")
+        if (callback != null) {
+            webView.addJavascriptInterface(
+                SauceclipAddCartJavaScriptInterface(callback),
+                "sauceclipAddCart"
             )
         }
     }
@@ -207,7 +218,7 @@ class SauceClipView @JvmOverloads constructor(
     }
 
     private class SauceclipMoveProductJavaScriptInterface(
-        val sauceflexOnShare: ((message: SauceProductInfo) -> Unit)
+        val sauceclipMoveProduct: ((message: SauceProductInfo) -> Unit)
     ) {
         private val handler = Handler()
 
@@ -216,28 +227,41 @@ class SauceClipView @JvmOverloads constructor(
             val gson = Gson()
             val productInfo = gson.fromJson(message, SauceProductInfo::class.java)
             handler.post {
-                sauceflexOnShare.invoke(productInfo)
+                sauceclipMoveProduct.invoke(productInfo)
             }
         }
     }
 
     private class SauceclipMoveCartJavaScriptInterface(
-        val sauceflexOnShare: ((message: SauceCartInfo) -> Unit)
+        val sauceclipMoveCart: (() -> Unit)
     ) {
         private val handler = Handler()
 
         @JavascriptInterface   // 공유하기
-        fun sauceclipMoveCart(message: String) {
+        fun sauceclipMoveCart() {
+            handler.post {
+                sauceclipMoveCart.invoke()
+            }
+        }
+    }
+
+    private class SauceclipAddCartJavaScriptInterface(
+        val sauceclipAddCart: ((message: SauceCartInfo) -> Unit)
+    ) {
+        private val handler = Handler()
+
+        @JavascriptInterface   // 공유하기
+        fun sauceclipAddCart(message: String) {
             val gson = Gson()
             val cartInfo = gson.fromJson(message, SauceCartInfo::class.java)
             handler.post {
-                sauceflexOnShare.invoke(cartInfo)
+                sauceclipAddCart.invoke(cartInfo)
             }
         }
     }
 
     private class SauceclipOnShareJavaScriptInterface(
-        val sauceflexOnShare: ((message: SauceShareInfo) -> Unit)
+        val sauceclipOnShare: ((message: SauceShareInfo) -> Unit)
     ) {
         private val handler = Handler()
 
@@ -246,13 +270,13 @@ class SauceClipView @JvmOverloads constructor(
             val gson = Gson()
             val shareInfo = gson.fromJson(message, SauceShareInfo::class.java)
             handler.post {
-                sauceflexOnShare.invoke(shareInfo)
+                sauceclipOnShare.invoke(shareInfo)
             }
         }
     }
 
     private class SauceclipOnErrorJavaScriptInterface(
-        val sauceflexOnMovebroadcast: ((message: SauceErrorInfo) -> Unit)
+        val sauceclipPlayerError: ((message: SauceErrorInfo) -> Unit)
     ) {
         private val handler = Handler()
 
@@ -261,7 +285,7 @@ class SauceClipView @JvmOverloads constructor(
             val gson = Gson()
             val sauceclipErrorInfo = gson.fromJson(message, SauceErrorInfo::class.java)
             handler.post {
-                sauceflexOnMovebroadcast.invoke(sauceclipErrorInfo)
+                sauceclipPlayerError.invoke(sauceclipErrorInfo)
             }
         }
     }

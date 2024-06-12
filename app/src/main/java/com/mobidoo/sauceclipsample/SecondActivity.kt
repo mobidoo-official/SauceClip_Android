@@ -27,6 +27,7 @@ class SecondActivity : Activity() {
     private lateinit var onShare: CheckBox
     private lateinit var onMoveProduct: CheckBox
     private lateinit var onMoveCart: CheckBox
+    private lateinit var onAddCart: CheckBox
     private lateinit var onMoveBroadcast: CheckBox
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,10 +54,11 @@ class SecondActivity : Activity() {
         onShare = findViewById(R.id.check_OnShare)
         onMoveProduct = findViewById(R.id.check_MoveProduct)
         onMoveCart = findViewById(R.id.check_OnMoveCart)
+        onAddCart = findViewById(R.id.check_OnAddCart)
         onMoveBroadcast = findViewById(R.id.check_MoveBroadcast)
 
         btnSauceviewActivity.setOnClickListener() {
-            if (clipId != null && clipId!!.isNotBlank()){
+            if (clipId != null && clipId!!.isNotBlank()) {
                 val intent = Intent(this, SauceViewActivity::class.java)
                 SauceViewActivity.onEnter = onEnter.isChecked
                 SauceViewActivity.onMoveExit = onMoveExit.isChecked
@@ -64,6 +66,7 @@ class SecondActivity : Activity() {
                 SauceViewActivity.onShare = onShare.isChecked
                 SauceViewActivity.onMoveProduct = onMoveProduct.isChecked
                 SauceViewActivity.onMoveCart = onMoveCart.isChecked
+                SauceViewActivity.onAddCart = onAddCart.isChecked
                 intent.putExtra("partnerId", partnerId)
                 intent.putExtra("clipId", clipId)
                 intent.putExtra("curationId", curationId)
@@ -76,7 +79,7 @@ class SecondActivity : Activity() {
         }
 
         btnSauceactivityActivity.setOnClickListener {
-            if (clipId != null && clipId!!.isNotBlank()){
+            if (clipId != null && clipId!!.isNotBlank()) {
                 SauceClip.openClipActivity(
                     mContext,
                     partnerId,
@@ -114,8 +117,15 @@ class SecondActivity : Activity() {
                         null
                     },
                     if (onMoveCart.isChecked) {
-                        { cartInfo, clipActivity ->
+                        { clipActivity ->
                             Toast.makeText(mContext, "onMoveCart", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        null
+                    },
+                    if (onAddCart.isChecked) {
+                        { cartInfo, clipActivity ->
+                            Toast.makeText(mContext, "onAddCart", Toast.LENGTH_SHORT).show()
                         }
                     } else {
                         null
@@ -124,13 +134,13 @@ class SecondActivity : Activity() {
                         Toast.makeText(mContext, "onError", Toast.LENGTH_SHORT).show()
                     }
                 )
-            }else {
+            } else {
                 Toast.makeText(mContext, "clipId is null", Toast.LENGTH_SHORT).show()
             }
         }
 
         btnCurationviewActivity.setOnClickListener() {
-            if (curationId != null && curationId!!.isNotBlank()){
+            if (curationId != null && curationId!!.isNotBlank()) {
                 val intent = Intent(this, SauceCurationViewActivity::class.java)
                 SauceCurationViewActivity.onMoveBroadcast = onMoveBroadcast.isChecked
                 intent.putExtra("partnerId", partnerId)

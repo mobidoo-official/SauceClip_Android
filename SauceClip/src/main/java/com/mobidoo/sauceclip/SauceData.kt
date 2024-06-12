@@ -1,25 +1,29 @@
 package com.mobidoo.sauceclip
 
+
 /**
  * 장바구니 정보를 나타내는 데이터 클래스입니다.
  *
- * @property linkUrl 제품에 접근할 수 있는 URL입니다.
- * @property clipIdx 제품과 연관된 클립의 고유 식별자입니다.
+ * @property clipIdx 클립의 고유 식별자입니다.
  * @property productId 제품의 고유 식별자입니다.
- * @property price 제품의 가격입니다. 이 값은 null일 수 있습니다.
+ * @property price 제품의 가격입니다.
  * @property productImg 제품 이미지의 URL입니다.
  * @property productName 제품의 이름입니다.
  * @property externalProductId 외부 시스템에서의 제품 고유 식별자입니다. 이 값은 null일 수 있습니다.
+ * @property productCode 제품의 코드입니다. 이 값은 null일 수 있습니다.
+ * @property optionCode 옵션의 코드입니다. 이 값은 null일 수 있습니다.
  */
 data class SauceCartInfo(
-    val linkUrl: String?,
     val clipIdx: String,
     val productId: Int,
-    val price: String?,
+    val price: String,
     val productImg: String,
     val productName: String,
-    val externalProductId: String?
+    val externalProductId: String?,
+    val productCode: String?,
+    val optionCode: String?
 )
+
 
 /**
  * 제품 정보를 나타내는 데이터 클래스입니다.

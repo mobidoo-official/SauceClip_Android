@@ -34,7 +34,8 @@ class SauceClip {
             onMoveExit: ((clipActivity: SauceClipActivity) -> Unit)? = null,
             onShare: ((message: SauceShareInfo) -> Unit)? = null,
             onMoveProduct: ((message: SauceProductInfo, clipActivity: SauceClipActivity) -> Unit)? = null,
-            onMoveCart: ((message: SauceCartInfo, clipActivity: SauceClipActivity) -> Unit)? = null,
+            onMoveCart: ((clipActivity: SauceClipActivity) -> Unit)? = null,
+            onAddCart: ((message: SauceCartInfo, clipActivity: SauceClipActivity) -> Unit)? = null,
             onError: ((message: SauceErrorInfo) -> Unit)? = null,
         ) {
             val intent = Intent(context, SauceClipActivity::class.java)
@@ -49,6 +50,7 @@ class SauceClip {
             SauceClipActivity.sauceclipOnShare = onShare
             SauceClipActivity.sauceclipMoveProduct = onMoveProduct
             SauceClipActivity.sauceclipMoveCart = onMoveCart
+            SauceClipActivity.sauceclipAddCart = onAddCart
             SauceClipActivity.sauceclipError = onError
 
             context.startActivity(intent)

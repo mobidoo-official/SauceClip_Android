@@ -70,6 +70,7 @@ class SauceCurationViewActivity : Activity() {
                     { productInfo, clipActivity ->
                         clipActivity.pipOn()
                     },
+                    { clipActivity -> },
                     { cartInfo, clipActivity -> },
                     { errorInfo ->
 

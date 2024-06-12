@@ -28,7 +28,8 @@ class SauceClipActivity: Activity() {
         var sauceclipMoveExit: ((clipActivity: SauceClipActivity) -> Unit)? = null
         var sauceclipOnShare: ((message: SauceShareInfo) -> Unit)? = null
         var sauceclipMoveProduct: ((message: SauceProductInfo, clipActivity: SauceClipActivity) -> Unit)? = null
-        var sauceclipMoveCart: ((message: SauceCartInfo, clipActivity: SauceClipActivity) -> Unit)? = null
+        var sauceclipMoveCart: ((clipActivity: SauceClipActivity) -> Unit)? = null
+        var sauceclipAddCart: ((message: SauceCartInfo, clipActivity: SauceClipActivity) -> Unit)? = null
         var sauceclipError: ((message: SauceErrorInfo) -> Unit)? = null
     }
 
@@ -67,8 +68,11 @@ class SauceClipActivity: Activity() {
         sauceclipView.setOnMoveProductListener{sauceProductInfo ->
             sauceclipMoveProduct?.invoke(sauceProductInfo, this)
         }
-        sauceclipView.setOnMoveCartListener{sauceCartInfo ->
-            sauceclipMoveCart?.invoke(sauceCartInfo, this)
+        sauceclipView.setOnMoveCartListener{
+            sauceclipMoveCart?.invoke( this)
+        }
+        sauceclipView.setOnAddCartListener{sauceCartInfo ->
+            sauceclipAddCart?.invoke(sauceCartInfo, this)
         }
         sauceclipView.setOnErrorListener(sauceclipError)
     }
