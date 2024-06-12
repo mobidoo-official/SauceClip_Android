@@ -20,6 +20,7 @@ class SecondActivity : Activity() {
     private var clipId: String? = null
     private var curationId: String? = null
     private var stageMode: Boolean = true
+    private var devMode: Boolean = false
 
     private lateinit var onEnter: CheckBox
     private lateinit var onMoveExit: CheckBox
@@ -30,6 +31,7 @@ class SecondActivity : Activity() {
     private lateinit var onAddCart: CheckBox
     private lateinit var onMoveBroadcast: CheckBox
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
@@ -38,6 +40,7 @@ class SecondActivity : Activity() {
         clipId = intent.getStringExtra("clipId")
         curationId = intent.getStringExtra("curationId")
         stageMode = intent.getBooleanExtra("stageMode", true)
+        devMode = intent.getBooleanExtra("devMode", false)
 
         init()
     }
@@ -71,6 +74,7 @@ class SecondActivity : Activity() {
                 intent.putExtra("clipId", clipId)
                 intent.putExtra("curationId", curationId)
                 intent.putExtra("stageMode", stageMode)
+                intent.putExtra("devMode", devMode)
                 startActivity(intent)
             } else {
                 Toast.makeText(mContext, "clipId is null", Toast.LENGTH_SHORT).show()
@@ -87,6 +91,7 @@ class SecondActivity : Activity() {
                     if (curationId != null && curationId!!.isNotBlank()) curationId else null,
                     true,
                     stageMode,
+                    devMode,
                     if (onEnter.isChecked) {
                         {
                             Toast.makeText(mContext, "onEnter", Toast.LENGTH_SHORT).show()
@@ -146,6 +151,7 @@ class SecondActivity : Activity() {
                 intent.putExtra("partnerId", partnerId)
                 intent.putExtra("curationId", curationId)
                 intent.putExtra("stageMode", stageMode)
+                intent.putExtra("devMode", devMode)
                 startActivity(intent)
             } else {
                 Toast.makeText(mContext, "curationId is null", Toast.LENGTH_SHORT).show()

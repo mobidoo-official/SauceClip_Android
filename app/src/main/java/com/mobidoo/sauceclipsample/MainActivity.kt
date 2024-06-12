@@ -7,6 +7,8 @@ import android.text.InputType
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 
@@ -16,7 +18,10 @@ class MainActivity : ComponentActivity() {
     private lateinit var clipIdEdit: EditText
     private lateinit var curationIdEdit: EditText
     private lateinit var btnNext: Button
-    private lateinit var stageModeCheck: CheckBox
+    private lateinit var radioGroup: RadioGroup
+    private lateinit var radioDev: RadioButton
+    private lateinit var radioStage: RadioButton
+    private lateinit var radioPrd: RadioButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +34,11 @@ class MainActivity : ComponentActivity() {
         partnerIdEdit = findViewById(R.id.partner_id_edit)
         clipIdEdit = findViewById(R.id.clip_id_edit)
         curationIdEdit = findViewById(R.id.curation_id_edit)
-        stageModeCheck = findViewById(R.id.check_stage)
+        radioGroup = findViewById(R.id.radio_group)
+        radioDev = findViewById(R.id.radio_dev)
+        radioStage = findViewById(R.id.radio_stage)
+        radioPrd = findViewById(R.id.radio_prod)
+
         btnNext = findViewById(R.id.btnNext)
 
         partnerIdEdit.setHint("Enter Partner ID")
@@ -54,7 +63,8 @@ class MainActivity : ComponentActivity() {
                 intent.putExtra("partnerId", partnerId)
                 intent.putExtra("clipId", clipId)
                 intent.putExtra("curationId", curationId)
-                intent.putExtra("stageMode", stageModeCheck.isChecked)
+                intent.putExtra("stageMode", radioStage.isChecked)
+                intent.putExtra("devMode", radioDev.isChecked)
                 startActivity(intent)
             }else {
                 Toast.makeText(mContext, "Please enter Partner ID", Toast.LENGTH_SHORT).show()

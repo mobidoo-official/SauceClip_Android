@@ -17,6 +17,7 @@ class SauceCurationViewActivity : Activity() {
     private var partnerId: String = ""
     private var curationId: String = ""
     private var stageMode: Boolean = true
+    private var devMode: Boolean = false
 
     companion object {
         var onMoveBroadcast: Boolean = false
@@ -29,6 +30,7 @@ class SauceCurationViewActivity : Activity() {
         partnerId = intent.getStringExtra("partnerId") ?: ""
         curationId = intent.getStringExtra("curationId") ?: ""
         stageMode = intent.getBooleanExtra("stageMode", true)
+        devMode = intent.getBooleanExtra("devMode", false)
 
         init()
     }
@@ -62,6 +64,7 @@ class SauceCurationViewActivity : Activity() {
                     "${message.curationId}",
                     true,
                     stageMode,
+                    devMode,
                     {
 //                        it.pipOn()
                     },

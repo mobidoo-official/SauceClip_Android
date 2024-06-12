@@ -19,6 +19,7 @@ class SauceViewActivity : Activity() {
     private var clipId: String = ""
     private var curationId: String? = null
     private var stageMode: Boolean = true
+    private var devMode: Boolean = false
 
     companion object {
         var onEnter: Boolean = false
@@ -38,6 +39,7 @@ class SauceViewActivity : Activity() {
         clipId = intent.getStringExtra("clipId") ?: ""
         curationId = intent.getStringExtra("curationId")
         stageMode = intent.getBooleanExtra("stageMode", true)
+        devMode = intent.getBooleanExtra("devMode", false)
 
         init()
     }
@@ -46,6 +48,7 @@ class SauceViewActivity : Activity() {
         sauceview = findViewById(R.id.sauceclip)
         sauceview.setInit(partnerId, clipId, if (curationId != null && curationId!!.isNotBlank()) curationId else null)
         sauceview.setStageMode(stageMode)
+        sauceview.setDevMode(devMode)
         sauceview.setProductActivity(true)
         sauceview.load()
 

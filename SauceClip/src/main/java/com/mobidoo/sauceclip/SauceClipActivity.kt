@@ -18,6 +18,7 @@ class SauceClipActivity: Activity() {
     private var curationId: String? = null
     // 스테이지 모드 여부
     private var stageMode: Boolean = false
+    private var devMode: Boolean = false
     // 제품 활동 열기 여부
     private var openProductActivity: Boolean = true
     // SauceClipView 인스턴스
@@ -40,6 +41,7 @@ class SauceClipActivity: Activity() {
         clipId = intent.getStringExtra("clipId") ?: ""
         curationId = intent.getStringExtra("curationId") ?: null
         stageMode = intent.getBooleanExtra("stageMode", false)
+        devMode = intent.getBooleanExtra("devMode", false)
         openProductActivity = intent.getBooleanExtra("openProductActivity", true)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
@@ -50,6 +52,7 @@ class SauceClipActivity: Activity() {
         sauceclipView = findViewById(R.id.sauceclip)
         sauceclipView.setInit(partnerId, clipId, curationId)
         sauceclipView.setStageMode(stageMode)
+        sauceclipView.setDevMode(devMode)
         sauceclipView.setProductActivity(openProductActivity)
         sauceclipView.load()
 

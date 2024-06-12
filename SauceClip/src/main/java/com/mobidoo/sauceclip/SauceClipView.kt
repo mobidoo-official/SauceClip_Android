@@ -24,6 +24,7 @@ class SauceClipView @JvmOverloads constructor(
     private var clipId: String? = null
     private var curationId: String? = null
     private var stageMode: Boolean = false
+    private var devMode: Boolean = false
     private var openProductActivity: Boolean = true
     private lateinit var mContext: Context
 
@@ -61,6 +62,10 @@ class SauceClipView @JvmOverloads constructor(
         stageMode = on
     }
 
+    fun setDevMode(on: Boolean) {
+        devMode = on
+    }
+
     fun setProductActivity(on: Boolean) {
         openProductActivity = on
     }
@@ -90,6 +95,8 @@ class SauceClipView @JvmOverloads constructor(
 
         if (stageMode) {
             url = "https://stage.player.sauceclip.com/player?partnerId=$partnerId&clipId=$clipId"
+        } else if (devMode) {
+            url = "https://dev.player.sauceclip.com/player?partnerId=$partnerId&clipId=$clipId"
         } else {
             url = "https://player.sauceclip.com/player?partnerId=$partnerId&clipId=$clipId"
         }

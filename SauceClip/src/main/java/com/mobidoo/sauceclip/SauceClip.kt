@@ -30,6 +30,7 @@ class SauceClip {
             curationId: String? = null,
             openProductActivity: Boolean = true,
             stageMode: Boolean = false,
+            devMode: Boolean = false,
             onEnter: ((clipActivity: SauceClipActivity) -> Unit)? = null,
             onMoveExit: ((clipActivity: SauceClipActivity) -> Unit)? = null,
             onShare: ((message: SauceShareInfo) -> Unit)? = null,
@@ -43,6 +44,7 @@ class SauceClip {
             intent.putExtra("clipId", clipId)
             intent.putExtra("curationId", curationId)
             intent.putExtra("stageMode", stageMode)
+            intent.putExtra("devMode", devMode)
             intent.putExtra("openProductActivity", openProductActivity)
 
             SauceClipActivity.sauceclipEnter = onEnter
