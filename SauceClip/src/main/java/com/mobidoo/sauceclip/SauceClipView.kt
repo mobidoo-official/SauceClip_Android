@@ -238,7 +238,7 @@ class SauceClipView @JvmOverloads constructor(
         private val handler = Handler()
 
         @JavascriptInterface   // 공유하기
-        fun sauceclipMoveCart() {
+        fun sauceclipMoveCart(message: String) {
             handler.post {
                 sauceclipMoveCart.invoke()
             }
